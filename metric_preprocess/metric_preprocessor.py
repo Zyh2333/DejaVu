@@ -30,7 +30,7 @@ class MetricPreprocessor:
         self._features_list, self._timestamp_2_idx = self.extract_features(
             fdg,
             start_ts=start_ts,
-            length=(end_ts - start_ts) // granularity + 1,
+            length=int((end_ts - start_ts) // granularity + 1),
             granularity=granularity,
             fill_na=fill_na,
             clip_value=clip_value,
@@ -112,8 +112,13 @@ class MetricPreprocessor:
 
         start_ts = fault_ts - window_size[0] * self._granularity
         length = sum(window_size)
-        timestamp_list = [start_ts + i * self._granularity for i in range(length)]
-        ts_idx = np.asarray([self._timestamp_2_idx[_] for _ in timestamp_list])
+        end_ts = start_ts + length * self._granularity
+        # timestamp_list = [start_ts + i * self._granularity for i in range(length)]
+        idx_list = []
+        for t in self._timestamp_2_idx:
+            if t >= start_ts and t <= end_ts:
+                idx_list.append(self._timestamp_2_idx[t])
+        ts_idx = np.asarray(sorted(idx_list))
         return ts_idx
 
     @lru_cache(maxsize=None)
@@ -147,7 +152,7 @@ class MetricPreprocessor:
                 ]
 
         # look back much more data points to ensure there is beginning missing points
-        timestamp_list = [start_ts + i * granularity for i in range(length)]
+        timestamp_list = [int(start_ts) + i * granularity for i in range(int(length))]
         timestamp_2_idx = {ts: idx for idx, ts in enumerate(timestamp_list)}
         features_list = []
         for failure_class in tqdm(fdg.failure_classes, desc='preprocess metrics for each instance type'):

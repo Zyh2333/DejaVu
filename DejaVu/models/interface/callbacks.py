@@ -12,7 +12,7 @@ from loguru import logger
 from pytorch_lightning.trainer.supporters import CombinedDataset
 
 from DejaVu.dataset import DejaVuDataset
-from DejaVu.evaluation_metrics import top_1_accuracy, top_2_accuracy, top_3_accuracy, top_k_accuracy, MAR, get_rank
+from DejaVu.evaluation_metrics import top_1_accuracy, top_2_accuracy, top_3_accuracy, top_k_accuracy, MAR, get_rank, ACC, AVG5
 from DejaVu.models.interface.model_interface import DejaVuModelInterface
 from failure_dependency_graph import FDG
 
@@ -69,6 +69,8 @@ class CFLLoggerCallback(pl.Callback):
             f"A@3={top_3_accuracy(labels_list, preds_list) * 100:<5.2f}% "
             f"A@5={top_k_accuracy(labels_list, preds_list, k=5) * 100:<5.2f}% "
             f"MAR={MAR(labels_list, preds_list, max_rank=pl_module.fdg.n_failure_instances):<5.2f} ",
+            f"ACC={ACC(labels_list, preds_list):<5.2f} ",
+            f"AVG@5={AVG5(labels_list, preds_list):<5.2f} ",
             file=output
         )
         train_rc_ids = reduce(

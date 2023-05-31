@@ -1,13 +1,12 @@
 import os
 from itertools import product
 from pathlib import Path
-from pprint import pformat
+import matplotlib.pyplot as plt
 from typing import Union, Optional, Any, Dict, List
 
 import networkx as nx
-from loguru import logger
 from networkx.drawing.nx_agraph import write_dot
-from yaml import load, CLoader as Loader
+from yaml import safe_load
 
 
 def insert_global_params(keys: List[str], global_params: Dict[str, Any], target: Dict[str, Any]):
@@ -22,9 +21,9 @@ def parse_yaml_graph_config(path: Union[str, Path], output_dir: Optional[Path] =
         return sorted(metrics, key=lambda _: _.split("##")[1])
 
     path = Path(path)
-    logger.debug(f"parsing Graph from {path!s}")
+    # logger.debug(f"parsing Graph from {path!s}")
     with open(path) as f:
-        input_data = load(f, Loader=Loader)
+        input_data = safe_load(f)
     g = nx.DiGraph()
     global_params = {}
     for obj in input_data:
@@ -35,6 +34,8 @@ def parse_yaml_graph_config(path: Union[str, Path], output_dir: Optional[Path] =
     for obj in input_data:
         try:
             if obj['class'] != "node":
+                continue
+            if obj['type'] != "OS" and obj['type'] != "Docker":
                 continue
             if "params" in obj or "global_params" in obj:
                 params = obj.get("params", {})
@@ -54,13 +55,15 @@ def parse_yaml_graph_config(path: Union[str, Path], output_dir: Optional[Path] =
             else:
                 g.add_node(obj['id'], **{"metrics": metrics_sorted(obj['metrics']), "type": obj["type"]})
         except KeyError as e:
-            logger.error(f"{e!r} obj={pformat(obj)}")
+            pass
+            # logger.error(f"{e!r} obj={pformat(obj)}")
 
     def add_edge(_src, _dst, _attrs):
         if _src in g and _dst in g:  # ignore edges that don't exist
             g.add_edge(_src, _dst, **_attrs)
         else:
-            logger.warning(f"ignoring edge {_src} -> {_dst}")
+            pass
+            # logger.warning(f"ignoring edge {_src} -> {_dst}")
 
     # parse edges in the second pass
     for obj in input_data:
@@ -85,15 +88,39 @@ def parse_yaml_graph_config(path: Union[str, Path], output_dir: Optional[Path] =
             else:
                 add_edge(obj["src"], obj["dst"], {"type": obj["type"]})
         except KeyError as e:
-            logger.error(f"{e!r} obj={pformat(obj)}")
+            # logger.error(f"{e!r} obj={pformat(obj)}")
+            pass
     if output_dir is not None:
         dot_path = output_dir / f"{path.name}.graph"
         write_dot(g, dot_path)
         # noinspection SpellCheckingInspection
         os.system(f'dot -Tpdf -O \'{dot_path}\'')
     if not len(list(nx.weakly_connected_components(g))) <= 1:
-        logger.warning(f"{path!s} is not a DAG: {list(nx.weakly_connected_components(g))=}")
+        pass
+        # logger.warning(f"{path!s} is not a DAG: {list(nx.weakly_connected_components(g))=}")
+    draw(g, "DejaVu" + "-" + "A1")
     return g
+
+
+def parse_graph(file_name):
+    return parse_yaml_graph_config(file_name)
+
+def draw(DG, file_name):
+    pos = nx.spring_layout(DG)
+    nx.draw(DG,
+            pos,
+            node_color = '#B0C4DE',
+            edge_color = (0,0,0,0.5),
+            font_color = 'b',
+            with_labels = True,
+            font_size = 10,
+            node_size = 600,
+            width = 2,
+            font_weight = 'bold')
+    labels = nx.get_edge_attributes(DG,'weight')
+    nx.draw_networkx_edge_labels(DG,pos,edge_labels=labels, font_size=12)
+    plt.title(file_name)
+    plt.savefig('picture/' + file_name + '.svg',format='svg',dpi=150)
 
 
 if __name__ == '__main__':

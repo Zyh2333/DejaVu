@@ -14,7 +14,7 @@ from torchinfo import summary
 
 from DejaVu.config import DejaVuConfig
 from DejaVu.dataset import prepare_sklearn_dataset
-from DejaVu.evaluation_metrics import top_1_accuracy, top_2_accuracy, top_3_accuracy, top_k_accuracy, MAR
+from DejaVu.evaluation_metrics import top_1_accuracy, top_2_accuracy, top_3_accuracy, top_k_accuracy, MAR, ACC, AVG5
 from DejaVu.models.get_model import ClassifierProtocol
 from DejaVu.models.interface import DejaVuModelInterface, DejaVuModuleProtocol
 from DejaVu.models.interface.callbacks import CFLLoggerCallback, TestCallback
@@ -186,6 +186,8 @@ def __train_exp_sklearn_classifier(config: DejaVuConfig, get_model: Callable[[FD
         "A@3": top_3_accuracy(y_trues, y_preds),
         "A@5": top_k_accuracy(y_trues, y_preds, k=5),
         "MAR": MAR(y_trues, y_preds, max_rank=cdp.n_failure_instances),
+        "ACC": ACC(y_trues, y_preds),
+        "AVG5": AVG5(y_trues, y_preds),
     }
     return metrics
 

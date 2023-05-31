@@ -81,8 +81,13 @@ def random_walk(graph: nx.DiGraph, config: RandomWalkFailureInstanceConfig, cach
     set_anomaly_score_(
         graph, window_size=config.window_size, aggregation_method=config.anomaly_score_aggregation_method
     )
+    personalization = nx.get_node_attributes(graph, 'anomaly_score')
+    for i in personalization:
+        if 'os' in i or 'db' in i:
+            personalization[i] = 0
+
     scores = nx.pagerank(
-        random_walk_graph, weight="weight", personalization=nx.get_node_attributes(graph, 'anomaly_score')
+        random_walk_graph, weight="weight", personalization=personalization
     )
     logger.info("Finished random walk")
 

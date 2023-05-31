@@ -41,7 +41,7 @@ class DejaVuDataset(th.utils.data.Dataset):
     ):
         self.cdp = cdp
         self.feature_extractor = feature_extractor
-        self.extra_window_size = 5
+        self.extra_window_size = 60
         self._window_size = (window_size[0] + self.extra_window_size, window_size[1] + self.extra_window_size)
         self._granularity = granularity
         if fault_ids is not None:

@@ -23,16 +23,18 @@ class FDGBaseConfig(Tap):
     metrics_path: Optional[Path] = None
     faults_path: Optional[Path] = None
     use_anomaly_direction_constraint: bool = False
-    data_dir: Path = Path("/SSF/data/aiops2020_phase2/")
-    cache_dir: Path = Path('/tmp/SSF/.cache')  # 用本地文件系统能加快速度
+    base_dir = ""
+    data_dir: Path = Path(base_dir + "SSF/data/A1/")
+    # data_dir: Path = Path("/SSF/data/")
+    cache_dir: Path = Path(base_dir + 'SSF/.cache')  # 用本地文件系统能加快速度
     flush_dataset_cache: bool = True
 
-    dataset_split_ratio: Tuple[float, float, float] = (0.4, 0.2, 0.4)
+    dataset_split_ratio: Tuple[float, float, float] = (0.8, 0.1, 0.1)
     train_set_sampling: float = 1.0  # 在训练集中只取前一部分，只用于测试训练集个数对结果的影响的实验
     train_set_repeat: int = 1
     balance_train_set: bool = False
 
-    output_base_path: Path = Path('/SSF/output')
+    output_base_path: Path = Path(base_dir + 'SSF/output')
     output_dir: Path = None
 
     cuda: bool = True
@@ -44,7 +46,8 @@ class FDGBaseConfig(Tap):
     FI_feature_dim: int = 3
     feature_projector_type: Literal['CNN', 'AE', 'GRU_AE', 'CNN_AE', 'GRU_VAE', 'GRU'] = 'CNN'
 
-    window_size: Tuple[int, int] = (10, 10)
+    # window_size: Tuple[int, int] = (10, 10)
+    window_size: Tuple[int, int] = (120, 120)
     batch_size: int = 16
     test_batch_size: int = 128
 
