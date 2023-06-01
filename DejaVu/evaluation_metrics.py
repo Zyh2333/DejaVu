@@ -47,6 +47,38 @@ def MAR(y_true: List[Set[Any]], y_pred: List[List[Any]], max_rank: Optional[int]
         for a, b in zip(y_true, y_pred)
     ])
 
+def AVG5(y_true: List[Set[Any]], y_pred: List[List[Any]]):
+    return (top_1_accuracy(y_true, y_pred) +
+            top_2_accuracy(y_true, y_pred) +
+            top_3_accuracy(y_true, y_pred) +
+            top_k_accuracy(y_true, y_pred, 4) +
+            top_k_accuracy(y_true, y_pred, 5)) / 5
+
+def ACC(y_true: List[Set[Any]], y_pred: List[List[Any]]):
+    # assert len(y_true) == len(y_pred)
+    # cnt = 0
+    # for a, b in zip(y_true, y_pred):
+    #     left = a
+    #     right = set(b[:k])
+    #     if left <= right:
+    #         cnt += 1
+    #     else:
+    #         if printer:
+    #             printer(f"expected: {left}, actual: {right}")
+    # node_rank = [_[0] for _ in scoreList]
+    # if n is None:
+    #     n = len(scoreList)
+    s = 0.0
+    for a, b in zip(y_true, y_pred):
+        n = len(b)
+        for i in range(len(a)):
+            if list(a)[i] in b:
+                rank = b.index(list(a)[i]) + 1
+                s += (n - max(0, rank - len(a))) / n
+            else:
+                s += 0
+        s /= len(a)
+    return s / len(y_true)
 
 def get_evaluation_metrics_dict(y_true: List[Set[Any]], y_pred: List[List[Any]], max_rank: Optional[int] = None):
     metrics = {
@@ -55,6 +87,8 @@ def get_evaluation_metrics_dict(y_true: List[Set[Any]], y_pred: List[List[Any]],
         "A@3": top_3_accuracy(y_true, y_pred),
         "A@5": top_k_accuracy(y_true, y_pred, k=5),
         "MAR": MAR(y_true, y_pred, max_rank=max_rank),
+        "ACC": ACC(y_true, y_pred),
+        "AVG@5": AVG5(y_true, y_pred),
     }
     return metrics
 

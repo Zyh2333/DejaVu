@@ -23,8 +23,8 @@ class FDGBaseConfig(Tap):
     metrics_path: Optional[Path] = None
     faults_path: Optional[Path] = None
     use_anomaly_direction_constraint: bool = False
-    data_dir: Path = Path("/SSF/data/aiops2020_phase2/")
-    cache_dir: Path = Path('/tmp/SSF/.cache')  # 用本地文件系统能加快速度
+    data_dir: Path = Path("SSF/data/A2/")
+    cache_dir: Path = Path('SSF/.cache')  # 用本地文件系统能加快速度
     flush_dataset_cache: bool = True
 
     dataset_split_ratio: Tuple[float, float, float] = (0.4, 0.2, 0.4)
@@ -32,7 +32,7 @@ class FDGBaseConfig(Tap):
     train_set_repeat: int = 1
     balance_train_set: bool = False
 
-    output_base_path: Path = Path('/SSF/output')
+    output_base_path: Path = Path('SSF/output')
     output_dir: Path = None
 
     cuda: bool = True

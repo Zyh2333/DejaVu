@@ -32,7 +32,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
 
     with profile("random_walk_main", report_printer=lambda _: logger.info(f"\n{_}")) as profiler:
         for fid in tqdm(base.test_failure_ids):
-            cache_dir = Path("/tmp/failure_instance_random_walk_cache") / config.data_dir.relative_to("/") / f"{fid=}"
+            cache_dir = Path("SSF/tmp/failure_instance_random_walk_cache") / config.data_dir.relative_to("SSF/") / f"{fid=}"
             logger.info(f"Cache dir: {cache_dir}")
             cache = Cache(
                 directory=str(cache_dir),
@@ -64,6 +64,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
             f"|{', '.join(y_pred[:5]):<50}"
         )
     metrics = get_evaluation_metrics_dict(y_trues, y_preds, max_rank=fdg.n_failure_instances)
+    print(metrics)
     logger.info(format_result_string(
         metrics,
         profiler,
