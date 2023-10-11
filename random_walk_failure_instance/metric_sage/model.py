@@ -136,8 +136,8 @@ def run_RCA(node_num, feat_num, df, time_data, time_list, metric, folder, class_
     # suffix_diy = "data_modify"
     # suffix = "model_parameters_DejaVu-D-1684318342.544748_91_20_10000_0.7.pkl"
     # suffix = "model_parameters_DejaVu-A2-1684314724.261361_18_20_2000_0.05.pkl"
-    suffix = "model_parameters_DejaVu-A1-1683993521.079898_22_10_2000_0.05.pkl"
-    # suffix = "model_parameters_DejaVu-A2-1684041806.569868_18_10_2000_0.05.pkl"
+    # suffix = "model_parameters_DejaVu-A1-1683993521.079898_22_10_2000_0.05.pkl"
+    suffix = "model_parameters_DejaVu-A2-1684041806.569868_18_10_2000_0.05.pkl"
     # suffix = "model_parameters_DejaVu-D-1684124503.9004421_91_10_10000_0.7.pkl"
     trained_model = graphsage
     trained_model.load_state_dict(torch.load("/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/model/" + suffix))

@@ -24,7 +24,7 @@ class FDGBaseConfig(Tap):
     faults_path: Optional[Path] = None
     use_anomaly_direction_constraint: bool = False
     base_dir = ""
-    data_dir: Path = Path(base_dir + "SSF/data/A1/")
+    data_dir: Path = Path(base_dir + "SSF/data/A2/")
     # data_dir: Path = Path("/SSF/data/")
     cache_dir: Path = Path(base_dir + 'SSF/.cache')  # 用本地文件系统能加快速度
     flush_dataset_cache: bool = True

@@ -34,7 +34,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
     dimension = [418, 496, 159]
 
     with profile("random_walk_main", report_printer=lambda _: logger.info(f"\n{_}")) as profiler:
-        folder = "/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/data/data2/1"
+        folder = "/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/data/data2/2"
         minute = 10
         # time_data
         metric_source_data = pd.read_csv(folder + '/' + 'metric.norm.csv')
@@ -83,7 +83,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
         #     lb = label_map[root_cause + '&' + str(row[4])]
         #     t = Time(begin_timestamp, end_timestamp, root_cause, root_cause_level, failure_type, lb)
         #     time_list.append(t)
-        graphsage = trainGraphSage(time_list, class_num, None, dimension[0])
+        graphsage = trainGraphSage(time_list, class_num, None, dimension[1])
         nums = []
         acc_count = 0
         acc = 0
@@ -157,7 +157,7 @@ def trainGraphSage(time_list, class_num, label_file, dimension, train = False):
     # for head in call_data.columns:
     #     if 'timestamp' in head: continue
     #     call_set.append(head[:head.find('&')])
-    metric_source_data = pd.read_csv('/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/data/data2/1/metric.norm.csv')
+    metric_source_data = pd.read_csv('/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/data/data2/2/metric.norm.csv')
     metric_source_data = metric_source_data.fillna(0)
     data = metric_source_data.iloc[:,2:]
     time_data = metric_source_data.iloc[:, 1:2]
