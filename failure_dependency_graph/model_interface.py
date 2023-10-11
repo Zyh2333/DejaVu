@@ -218,16 +218,16 @@ def split_failures_by_type(
         _valid_split = max(int(len(ids) * (split[0] + split[1])), 1)
         rng.shuffle(ids)
 
-        # train_ids = ids[0:_train_split]
-        train_ids = ids
+        train_ids = ids[0:_train_split]
+        # train_ids = ids
         train_ids_list.append(train_ids)
 
         validation_ids = ids[_train_split:_valid_split]
         # validation_ids = ids
         validation_list.extend(validation_ids)
 
-        # test_ids = ids[_valid_split:]
-        test_ids = ids
+        test_ids = ids[_valid_split:]
+        # test_ids = ids
         test_list.extend(test_ids)
 
         del _train_split, _valid_split
