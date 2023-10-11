@@ -5,10 +5,8 @@ from loguru import logger
 from pyprof import profile
 from tqdm import tqdm
 import pandas as pd
+import time as t_counter
 from random_walk_failure_instance.metric_sage.time import Time
-from DejaVu.config import DejaVuConfig
-from DejaVu.evaluation_metrics import get_evaluation_metrics_dict
-from DejaVu.workflow import format_result_string
 from random_walk_failure_instance.metric_sage.model import run_RCA
 
 
@@ -57,7 +55,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
         root_causes = label_data['cmdb_id']
 
         time_list = []
-
+        # 数据集AB用
         for row in label_data.itertuples():
             root_cause = row[4]
             root_cause_level = row[6]
@@ -72,6 +70,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
             lb = label_map[root_cause + '&' + str(row[3])]
             t = Time(begin_timestamp, end_timestamp, root_cause, root_cause_level, failure_type, lb)
             time_list.append(t)
+        # 数据集CD用
         # for row in label_data.itertuples():
         #     root_cause = row[3]
         #     root_cause_level = row[6]
@@ -88,7 +87,10 @@ def workflow(config: RandomWalkFailureInstanceConfig):
         nums = []
         acc_count = 0
         acc = 0
+        t_count = 0
+        t_sum = 0
         for fid in tqdm(base.test_failure_ids):
+            begin_t = t_counter.time_ns()
             cache_dir = Path("SSF/tmp/failure_instance_random_walk_cache") / config.data_dir.relative_to("SSF/") / f"{fid=}"
             logger.info(f"Cache dir: {cache_dir}")
             cache = Cache(
@@ -139,9 +141,14 @@ def workflow(config: RandomWalkFailureInstanceConfig):
                 acc_count += 1
                 acc += acc_temp
             nums.append(count_rank(time.root_cause, sorted(list(failure_instance_scores.keys()), key=lambda x: failure_instance_scores[x], reverse=True)))
+            end_t = t_counter.time_ns()
+            t_count += 1
+            t_sum += (end_t - begin_t)
     print_pr(nums)
+    print("TimeAVG: " + str(t_sum / acc_count) + "ns")
     print("Acc" + str(acc / acc_count))
 
+# 加载训练好的MicroIRC模型
 def trainGraphSage(time_list, class_num, label_file, dimension, train = False):
     # build svc call
     # call_file_name = folder + '/' + 'call.csv'

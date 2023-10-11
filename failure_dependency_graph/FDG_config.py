@@ -46,8 +46,8 @@ class FDGBaseConfig(Tap):
     FI_feature_dim: int = 3
     feature_projector_type: Literal['CNN', 'AE', 'GRU_AE', 'CNN_AE', 'GRU_VAE', 'GRU'] = 'CNN'
 
-    # window_size: Tuple[int, int] = (10, 10)
-    window_size: Tuple[int, int] = (120, 120)
+    window_size: Tuple[int, int] = (10, 10)
+    # window_size: Tuple[int, int] = (120, 120)
     batch_size: int = 16
     test_batch_size: int = 128
 

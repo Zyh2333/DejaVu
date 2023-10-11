@@ -116,7 +116,7 @@ def run_RCA(node_num, feat_num, df, time_data, time_list, metric, folder, class_
                    base_model=enc1, gcn=True, cuda=cuda)
 
     # train parameters
-    num_sample = 20
+    num_sample = 10
     batch_size = 10000
     epochs = 400
     learning_rate = 0.05

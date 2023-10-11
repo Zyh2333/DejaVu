@@ -47,7 +47,7 @@ class FDGModelInterface(pl.LightningModule, Generic[CONFIG_T, DATASET_T]):
         logger.info(f"dataset_cache_dir={dataset_cache_dir}")
         self._cache = Cache(str(dataset_cache_dir), size_limit=int(1e10))
 
-        self._train_fault_ids, self._validation_fault_ids, self._test_fault_ids = split_failures_by_type(
+        self._train_fault_ids, self._validation_fault_ids, self._test_fault_ids, self._fault_type_2_id_list = split_failures_by_type(
             self._fdg.failures_df, split=self._config.dataset_split_ratio,
             train_set_sampling_ratio=self._config.train_set_sampling,
             balance_train_set=self._config.balance_train_set,
@@ -100,7 +100,7 @@ class FDGModelInterface(pl.LightningModule, Generic[CONFIG_T, DATASET_T]):
     def get_metric_preprocessor(fdg: FDG, cache: Cache, config: FDGBaseConfig) -> MetricPreprocessor:
         fe_cache_key = f"MetricPreprocessor"
         if fe_cache_key not in cache or config.flush_dataset_cache:
-            cache.set(fe_cache_key, MetricPreprocessor(fdg=fdg, granularity=5))
+            cache.set(fe_cache_key, MetricPreprocessor(fdg=fdg, granularity=60))
         else:
             logger.warning("Use cached metric preprocessor")
         mp = cache.get(fe_cache_key)
@@ -218,16 +218,16 @@ def split_failures_by_type(
         _valid_split = max(int(len(ids) * (split[0] + split[1])), 1)
         rng.shuffle(ids)
 
-        train_ids = ids[0:_train_split]
-        # train_ids = ids
+        # train_ids = ids[0:_train_split]
+        train_ids = ids
         train_ids_list.append(train_ids)
 
         validation_ids = ids[_train_split:_valid_split]
         # validation_ids = ids
         validation_list.extend(validation_ids)
 
-        test_ids = ids[_valid_split:]
-        # test_ids = ids
+        # test_ids = ids[_valid_split:]
+        test_ids = ids
         test_list.extend(test_ids)
 
         del _train_split, _valid_split
@@ -271,4 +271,4 @@ def split_failures_by_type(
         f"{len(validation_list)=} "
         f"{len(test_list)=} "
     )
-    return train_list, validation_list, test_list
+    return train_list, validation_list, test_list, fault_type_2_id_list

@@ -6,7 +6,7 @@ from pyprof import profile
 
 from DejaVu.config import DejaVuConfig
 from DejaVu.dataset import DejaVuDataset
-from DejaVu.evaluation_metrics import top_1_accuracy, top_2_accuracy, top_3_accuracy, top_k_accuracy, MAR
+from DejaVu.evaluation_metrics import top_1_accuracy, top_2_accuracy, top_3_accuracy, top_k_accuracy, MAR, ACC
 from DejaVu.models.interface.loss import binary_classification_loss
 from failure_dependency_graph import FDGModelInterface, FDG
 
@@ -176,4 +176,24 @@ class DejaVuModelInterface(FDGModelInterface[DejaVuConfig, DejaVuDataset]):
             "A@5": top_k_accuracy(label_list, pred_list, k=5),
             "MAR": MAR(label_list, pred_list, max_rank=self.fdg.n_failure_instances),
         }
+        instance_label = []
+        instance_pred = []
+
+        svc_label = []
+        svc_pred = []
+
+        i = 0
+        for l in label_list:
+            root_cause = self.fdg.flatten_failure_instances[list(l)[0]]
+            if '-' in root_cause:
+                instance_label.append(label_list[i])
+                instance_pred.append(pred_list[i])
+            else:
+                svc_label.append(label_list[i])
+                svc_pred.append(pred_list[i])
+            i += 1
+        instance_acc = ACC(instance_label, instance_pred)
+        svc_acc = ACC(svc_label, svc_pred)
+        print("instance_acc:" + str(instance_acc))
+        print("svc_acc:" + str(svc_acc))
         self.log_dict(metrics)

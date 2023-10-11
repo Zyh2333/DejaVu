@@ -3,17 +3,19 @@ import torch.nn as nn
 from torch.nn import init
 import torch.nn.functional as F
 
+
 class Encoder(nn.Module):
     """
     Encodes a node's using 'convolutional' GraphSage approach
     """
+
     def __init__(self, name, features, feature_dim,
-            embed_dim, adj_lists, aggregator,
-            metric,
-            index_map_list,
-            num_sample=10,
-            base_model=None, gcn=False, cuda=False, 
-            feature_transform=False):
+                 embed_dim, adj_lists, aggregator,
+                 metric,
+                 index_map_list,
+                 num_sample=10,
+                 base_model=None, gcn=False, cuda=False,
+                 feature_transform=False):
         super(Encoder, self).__init__()
 
         self.name = name
@@ -30,12 +32,12 @@ class Encoder(nn.Module):
         self.cuda = cuda
         self.aggregator.cuda = cuda
         self.weight = nn.Parameter(
-                torch.FloatTensor(embed_dim, self.feat_dim if self.gcn else 2 * self.feat_dim))
+            torch.FloatTensor(embed_dim, self.feat_dim if self.gcn else 2 * self.feat_dim))
         init.xavier_uniform(self.weight)
         self.metric = metric
         self.index_map_list = index_map_list
 
-    def forward(self, nodes, metric, is_node_train_index = True):
+    def forward(self, nodes, metric, is_node_train_index=True):
         """
         Generates embeddings for a batch of nodes.
 
@@ -47,14 +49,14 @@ class Encoder(nn.Module):
                 neigh_nodes.append(self.adj_lists[int(node)])
             else:
                 # A1
-                # neigh_nodes.append({i for i in range(int(node) - 5, min((int(node) + 5), 3386))})
+                neigh_nodes.append({i for i in range(max(0, int(node) - 5), min((int(node) + 5), 3386))})
                 # A2
-                # neigh_nodes.append({i for i in range(int(node) - 10, (int(node) + 10))})
+                # neigh_nodes.append({i for i in range(max(0, int(node) - 10), (int(node) + 10))})
                 # D
-                neigh_nodes.append({i for i in range(int(node) - 15, (int(node) + 15))})
+                # neigh_nodes.append({i for i in range(max(0, int(node) - 15), (int(node) + 15))})
         # metric within neigh_nodes
         neigh_feats = self.aggregator.forward(nodes, neigh_nodes, metric,
-                self.num_sample, is_node_train_index)
+                                              self.num_sample, is_node_train_index)
         try:
             if not self.gcn:
                 if self.cuda:

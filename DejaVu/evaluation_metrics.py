@@ -55,19 +55,6 @@ def MAR(y_true: List[Set[Any]], y_pred: List[List[Any]], max_rank: Optional[int]
     ])
 
 def ACC(y_true: List[Set[Any]], y_pred: List[List[Any]]):
-    # assert len(y_true) == len(y_pred)
-    # cnt = 0
-    # for a, b in zip(y_true, y_pred):
-    #     left = a
-    #     right = set(b[:k])
-    #     if left <= right:
-    #         cnt += 1
-    #     else:
-    #         if printer:
-    #             printer(f"expected: {left}, actual: {right}")
-    # node_rank = [_[0] for _ in scoreList]
-    # if n is None:
-    #     n = len(scoreList)
     s = 0.0
     for a, b in zip(y_true, y_pred):
         n = len(b)
