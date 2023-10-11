@@ -176,24 +176,24 @@ class DejaVuModelInterface(FDGModelInterface[DejaVuConfig, DejaVuDataset]):
             "A@5": top_k_accuracy(label_list, pred_list, k=5),
             "MAR": MAR(label_list, pred_list, max_rank=self.fdg.n_failure_instances),
         }
-        instance_label = []
-        instance_pred = []
-
-        svc_label = []
-        svc_pred = []
-
-        i = 0
-        for l in label_list:
-            root_cause = self.fdg.flatten_failure_instances[list(l)[0]]
-            if '-' in root_cause:
-                instance_label.append(label_list[i])
-                instance_pred.append(pred_list[i])
-            else:
-                svc_label.append(label_list[i])
-                svc_pred.append(pred_list[i])
-            i += 1
-        instance_acc = ACC(instance_label, instance_pred)
-        svc_acc = ACC(svc_label, svc_pred)
-        print("instance_acc:" + str(instance_acc))
-        print("svc_acc:" + str(svc_acc))
+        # instance_label = []
+        # instance_pred = []
+        #
+        # svc_label = []
+        # svc_pred = []
+        #
+        # i = 0
+        # for l in label_list:
+        #     root_cause = self.fdg.flatten_failure_instances[list(l)[0]]
+        #     if '-' in root_cause:
+        #         instance_label.append(label_list[i])
+        #         instance_pred.append(pred_list[i])
+        #     else:
+        #         svc_label.append(label_list[i])
+        #         svc_pred.append(pred_list[i])
+        #     i += 1
+        # instance_acc = ACC(instance_label, instance_pred)
+        # svc_acc = ACC(svc_label, svc_pred)
+        # print("instance_acc:" + str(instance_acc))
+        # print("svc_acc:" + str(svc_acc))
         self.log_dict(metrics)

@@ -87,7 +87,7 @@ rca_evaluation_metrics = {
     "A@3": top_3_accuracy,
     "MAR": MAR,
     "MFR": MFR,
-    "ACC": ACC,
+    # "ACC": ACC,
     "AVG@5": AVG5,
 }
 
