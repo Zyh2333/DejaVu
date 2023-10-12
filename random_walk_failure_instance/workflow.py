@@ -34,6 +34,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
     dimension = [418, 496, 159]
 
     with profile("random_walk_main", report_printer=lambda _: logger.info(f"\n{_}")) as profiler:
+        model_load_time = t_counter.time_ns()
         folder = "/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/data/data2/2"
         minute = 10
         # time_data
@@ -84,11 +85,12 @@ def workflow(config: RandomWalkFailureInstanceConfig):
         #     t = Time(begin_timestamp, end_timestamp, root_cause, root_cause_level, failure_type, lb)
         #     time_list.append(t)
         graphsage = trainGraphSage(time_list, class_num, None, dimension[1])
+        t_model_total = t_counter.time_ns() - model_load_time
         nums = []
         acc_count = 0
         acc = 0
         t_count = 0
-        t_sum = 0
+        t_sum = t_model_total
         for fid in tqdm(base.test_failure_ids):
             begin_t = t_counter.time_ns()
             cache_dir = Path("SSF/tmp/failure_instance_random_walk_cache") / config.data_dir.relative_to("SSF/") / f"{fid=}"
@@ -145,7 +147,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
             t_count += 1
             t_sum += (end_t - begin_t)
     print_pr(nums)
-    print("TimeAVG: " + str(t_sum / acc_count) + "ns")
+    print("TimeAVG: " + str(t_sum / acc_count / 1e6) + "ms")
     print("Acc" + str(acc / acc_count))
 
 # 加载训练好的MicroIRC模型
