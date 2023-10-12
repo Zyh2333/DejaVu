@@ -113,13 +113,13 @@ class MetricPreprocessor:
         start_ts = fault_ts - window_size[0] * self._granularity
         length = sum(window_size)
         end_ts = start_ts + length * self._granularity
-        timestamp_list = [start_ts + i * self._granularity for i in range(length)]
-        ts_idx = np.asarray([self._timestamp_2_idx[_] for _ in timestamp_list])
-        # idx_list = []
-        # for t in self._timestamp_2_idx:
-        #     if t >= start_ts and t <= end_ts:
-        #         idx_list.append(self._timestamp_2_idx[t])
-        # ts_idx = np.asarray(sorted(idx_list))
+        # timestamp_list = [start_ts + i * self._granularity for i in range(length)]
+        # ts_idx = np.asarray([self._timestamp_2_idx[_] for _ in timestamp_list])
+        idx_list = []
+        for t in self._timestamp_2_idx:
+            if t >= start_ts and t <= end_ts:
+                idx_list.append(self._timestamp_2_idx[t])
+        ts_idx = np.asarray(sorted(idx_list))
         return ts_idx
 
     @lru_cache(maxsize=None)
