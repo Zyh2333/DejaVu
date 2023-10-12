@@ -33,8 +33,8 @@ def workflow(config: RandomWalkFailureInstanceConfig):
     y_preds = []
     dimension = [418, 496, 159]
 
+    model_load_time = t_counter.time_ns()
     with profile("random_walk_main", report_printer=lambda _: logger.info(f"\n{_}")) as profiler:
-        model_load_time = t_counter.time_ns()
         folder = "/Users/zhuyuhan/Documents/391-WHU/experiment/researchProject/MicroIRC/data/data2/2"
         minute = 10
         # time_data
@@ -147,7 +147,7 @@ def workflow(config: RandomWalkFailureInstanceConfig):
             t_count += 1
             t_sum += (end_t - begin_t)
     print_pr(nums)
-    print("TimeAVG: " + str(t_sum / acc_count / 1e6) + "ms")
+    print("TimeAVG: " + str((t_counter.time_ns() - model_load_time) / t_count / 1e6) + "ms")
     print("Acc" + str(acc / acc_count))
 
 # 加载训练好的MicroIRC模型
