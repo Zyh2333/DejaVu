@@ -1,3 +1,5 @@
+import random
+import math
 from collections import defaultdict
 from functools import cached_property, reduce
 from typing import List, Optional, Tuple, TypeVar, Generic, Any, Union
@@ -213,11 +215,22 @@ def split_failures_by_type(
     train_ids_list: List[List[int]] = []
     validation_list: List[int] = []
     test_list: List[int] = []
+    rate = 0.9
+    sample_num = int(rate * len(fault_type_2_id_list.keys()))
+    if sample_num == 0:
+        return None, None, None, None
+    sample_fault_types = random.sample(list(fault_type_2_id_list.keys()), sample_num)
     for fault_type, ids in fault_type_2_id_list.items():
         _train_split = max(int(len(ids) * split[0]), 1)
         _valid_split = max(int(len(ids) * (split[0] + split[1])), 1)
         rng.shuffle(ids)
 
+        test_ids = ids[_valid_split:]
+        # test_ids = ids
+        test_list.extend(test_ids)
+
+        if fault_type not in sample_fault_types:
+            continue
         train_ids = ids[0:_train_split]
         # train_ids = ids
         train_ids_list.append(train_ids)
@@ -225,10 +238,6 @@ def split_failures_by_type(
         validation_ids = ids[_train_split:_valid_split]
         # validation_ids = ids
         validation_list.extend(validation_ids)
-
-        test_ids = ids[_valid_split:]
-        # test_ids = ids
-        test_list.extend(test_ids)
 
         del _train_split, _valid_split
 
